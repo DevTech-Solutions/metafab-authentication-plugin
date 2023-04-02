@@ -1,0 +1,9 @@
+name: MetaFab-Authentication
+main: us.devtechsolutions.metafab.bukkit.BukkitPlugin
+version: 0.1.0
+author: DevTech-Solutions
+description: "Authenticate Minecraft Players with your MetaFab Ecosystem & Game"
+api-version: "1.13"
+commands:
+  metafab:
+    description: "Authenticate your minecraft account with metafab"

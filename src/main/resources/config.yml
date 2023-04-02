@@ -1,0 +1,11 @@
+ecosystem:
+  id: ""
+  secret: ""
+
+game:
+  id: ""
+  secret: ""
+
+web-server:
+  port: 3002
+  redirect: "https://lbu.ke"
