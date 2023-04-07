@@ -4,8 +4,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import us.devtechsolutions.metafab.api.CollectionAPI;
+import us.devtechsolutions.metafab.api.ItemAPI;
 import us.devtechsolutions.metafab.api.MetaFabAPI;
 import us.devtechsolutions.metafab.authentication.AuthenticationManager;
+import us.devtechsolutions.metafab.bukkit.command.BukkitAuthCommand;
+import us.devtechsolutions.metafab.bukkit.command.RedeemableCommand;
+import us.devtechsolutions.metafab.bukkit.config.ConfigManager;
+import us.devtechsolutions.metafab.bukkit.listener.PlayerJoinListener;
+import us.devtechsolutions.metafab.collection.CollectionManager;
+import us.devtechsolutions.metafab.item.ItemManager;
+import us.devtechsolutions.metafab.model.collection.Collection;
 import us.devtechsolutions.metafab.model.contract.Contract;
 import us.devtechsolutions.metafab.model.currency.Currency;
 import us.devtechsolutions.metafab.model.ecosystem.EcoSystem;
@@ -31,13 +40,6 @@ public final class BukkitPlugin extends JavaPlugin implements PluginProvider {
 
 		port(this.preferredPort());
 
-		// Initialise Managers
-		final PlayerManager playerManager = new PlayerManager();
-		final AuthenticationManager authenticationManager = new AuthenticationManager(playerManager);
-
-		// Register Commands
-		Objects.requireNonNull(this.getCommand("metafab")).setExecutor(new BukkitAuthCommand(authenticationManager));
-
 		// Tell the provider bukkit is running this plugin.
 		this.initProvider(this);
 
@@ -46,10 +48,27 @@ public final class BukkitPlugin extends JavaPlugin implements PluginProvider {
 		final Game game = EndpointUtil.fetchGame(this.gameId());
 		final List<Currency> currencies = EndpointUtil.fetchCurrencies(game.publishedKey());
 		final List<Contract> contracts = EndpointUtil.fetchContracts(game.publishedKey());
-		new MetaFabAPI(authenticationManager, playerManager, ecoSystem, game, currencies, contracts);
+		final List<Collection> collections = EndpointUtil.fetchCollections(game.publishedKey());
 
-		// Run the web server
-//		Bukkit.getScheduler().runTaskAsynchronously(this, () -> );
+		// Initialise Managers
+		final ConfigManager configManager = new ConfigManager(this);
+		final PlayerManager playerManager = new PlayerManager();
+		final AuthenticationManager authenticationManager = new AuthenticationManager(playerManager);
+		final CollectionManager collectionManager = new CollectionManager(collections);
+		final ItemManager itemManager = new ItemManager();
+		collections.forEach(c -> itemManager.addItems(c.id(), EndpointUtil.fetchItems(c.id().toString())));
+
+		// Register Commands
+		Objects.requireNonNull(this.getCommand("metafab")).setExecutor(new BukkitAuthCommand(authenticationManager));
+		Objects.requireNonNull(this.getCommand("redeem")).setExecutor(new RedeemableCommand(this, configManager));
+
+		// Register Listeners
+		Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(this, configManager, playerManager), this);
+
+		new MetaFabAPI(authenticationManager, playerManager, collectionManager, itemManager, ecoSystem, game, currencies, contracts);
+
+		CollectionAPI.getCollections().forEach(c -> System.out.printf("%s - %s%n", c.name(), c.id()));
+		ItemAPI.getItems().forEach(item -> System.out.printf("%s - %s%n", item.id(), item.name()));
 	}
 
 	@Override
@@ -76,28 +95,8 @@ public final class BukkitPlugin extends JavaPlugin implements PluginProvider {
 	}
 
 	@Override
-	public @NotNull String ecosystemSecret() {
-		final String path = "ecosystem.secret";
-		if (!super.getConfig().contains(path)) {
-			throw new RuntimeException("You haven't configured %s in the config.".formatted(path));
-		}
-
-		return super.getConfig().getString(path, "");
-	}
-
-	@Override
 	public @NotNull String gameId() {
 		final String path = "game.id";
-		if (!super.getConfig().contains(path)) {
-			throw new RuntimeException("You haven't configured %s in the config.".formatted(path));
-		}
-
-		return super.getConfig().getString(path, "");
-	}
-
-	@Override
-	public @NotNull String gameSecret() {
-		final String path = "game.secret";
 		if (!super.getConfig().contains(path)) {
 			throw new RuntimeException("You haven't configured %s in the config.".formatted(path));
 		}

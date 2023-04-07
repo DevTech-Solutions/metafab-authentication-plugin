@@ -1,5 +1,6 @@
 package us.devtechsolutions.metafab.model.player;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import us.devtechsolutions.metafab.model.profile.BaseProfile;
@@ -178,6 +179,7 @@ public final class BaseUser implements User {
 		return this.accessToken;
 	}
 
+	@ApiStatus.Internal
 	public void accessToken(@NotNull String value) {
 		this.accessToken = value;
 	}
@@ -192,6 +194,7 @@ public final class BaseUser implements User {
 		return this.walletDecryptKey;
 	}
 
+	@ApiStatus.Internal
 	public void walletDecryptKey(@NotNull String value) {
 		this.walletDecryptKey = value;
 	}

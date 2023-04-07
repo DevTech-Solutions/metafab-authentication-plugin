@@ -1,6 +1,7 @@
 package us.devtechsolutions.metafab.provider;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -11,10 +12,14 @@ public interface PluginProvider {
 	PluginProvider[] PROVIDER = { null };
 
 	@NotNull String ecosystemId();
-	@NotNull String ecosystemSecret(); //<--- todo remove
+	@Nullable default String ecosystemSecret() {
+		return System.getenv("ecosystem-secret");
+	}
 
 	@NotNull String gameId();
-	@NotNull String gameSecret(); //<--- todo remove
+	@Nullable default String gameSecret() {
+		return System.getenv("game-secret");
+	}
 
 	@NotNull String redirect();
 

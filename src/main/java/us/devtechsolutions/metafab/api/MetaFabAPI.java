@@ -2,6 +2,8 @@ package us.devtechsolutions.metafab.api;
 
 import org.jetbrains.annotations.*;
 import us.devtechsolutions.metafab.authentication.AuthenticationManager;
+import us.devtechsolutions.metafab.collection.CollectionManager;
+import us.devtechsolutions.metafab.item.ItemManager;
 import us.devtechsolutions.metafab.model.contract.Contract;
 import us.devtechsolutions.metafab.model.currency.Currency;
 import us.devtechsolutions.metafab.model.ecosystem.EcoSystem;
@@ -33,6 +35,7 @@ public final class MetaFabAPI {
 	 */
 	@ApiStatus.Internal
 	public MetaFabAPI(@NotNull AuthenticationManager authenticationManager, @NotNull PlayerManager playerManager,
+					  @NotNull CollectionManager collectionManager, @NotNull ItemManager itemManager,
 	                  @NotNull EcoSystem ecoSystem, @NotNull Game game, @NotNull List<Currency> currencies,
 	                  @NotNull List<Contract> contracts) {
 		if (!Objects.isNull(singleton))
@@ -46,6 +49,10 @@ public final class MetaFabAPI {
 		this.game = game;
 		this.currencies = currencies;
 		this.contracts = contracts;
+
+		new UserAPI(authenticationManager, playerManager);
+		new CollectionAPI(collectionManager);
+		new ItemAPI(itemManager);
 	}
 
 	/**
@@ -68,30 +75,6 @@ public final class MetaFabAPI {
 	@ApiStatus.AvailableSince("1.0")
 	public static @NotNull Game getGame() {
 		return singleton.game;
-	}
-
-	@NonBlocking
-	@ApiStatus.AvailableSince("1.0")
-	public static boolean hasValidAuthenticationCode(@NotNull UUID playerUniqueId) {
-		return !Objects.isNull(getAuthenticationCode(playerUniqueId));
-	}
-
-	@NonBlocking
-	@ApiStatus.AvailableSince("1.0")
-	public static @UnknownNullability UUID getAuthenticationCode(@NotNull UUID playerUniqueId) {
-		return singleton.authenticationManager.getCodeFromPlayer(playerUniqueId);
-	}
-
-	@NonBlocking
-	@ApiStatus.AvailableSince("1.0")
-	public static boolean isAuthenticated(@NotNull UUID playerUniqueId) {
-		return !Objects.isNull(getMetaFabUser(playerUniqueId));
-	}
-
-	@NonBlocking
-	@ApiStatus.AvailableSince("1.0")
-	public static @UnknownNullability User getMetaFabUser(@NotNull UUID playerUniqueId) {
-		return singleton.playerManager.getMetaFabUser(playerUniqueId);
 	}
 
 	/**
@@ -117,4 +100,6 @@ public final class MetaFabAPI {
 	public static @NotNull User playerByUniqueId(@NotNull UUID metaFabUserId) {
 		return null;
 	}
+
+//	public static @NotNull String
 }

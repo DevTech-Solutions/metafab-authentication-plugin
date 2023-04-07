@@ -7,3 +7,5 @@ api-version: "1.13"
 commands:
   metafab:
     description: "Authenticate your minecraft account with metafab"
+  redeem:
+    description: "Opens an NFT redeemable inventory"

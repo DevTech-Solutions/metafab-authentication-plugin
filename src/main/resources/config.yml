@@ -9,3 +9,91 @@ game:
 web-server:
   port: 3002
   redirect: "https://lbu.ke"
+
+items:
+  'e1261d6a-09f2-4383-9e75-717f3986d257':
+    '1':
+      material: PAPER
+      model: 1
+      name: "&a&lVIP RANK"
+      redeemable: false
+      lore: []
+      exists-in-wallet-commands:
+        - lp user {PLAYER} parent add vip
+      removed-from-wallet-commands:
+        - lp user {PLAYER} parent remove vip
+      redeem-command: []
+    '2':
+      material: PAPER
+      model: 2
+      name: "&b&lMVP RANK"
+      redeemable: false
+      lore: []
+      exists-in-wallet-commands:
+        - lp user {PLAYER} parent add mvp
+      removed-from-wallet-commands:
+        - lp user {PLAYER} parent remove mvp
+      redeem-command: []
+    '3':
+      material: PAPER
+      model: 3
+      name: "&6&lLEGEND RANK"
+      redeemable: false
+      lore: []
+      exists-in-wallet-commands:
+        - lp user {PLAYER} parent add legend
+      removed-from-wallet-commands:
+        - lp user {PLAYER} parent remove legend
+      redeem-command: []
+    '4':
+      material: PAPER
+      model: 4
+      name: "&d&lULTRA RANK"
+      redeemable: false
+      lore: []
+      exists-in-wallet-commands:
+        - lp user {PLAYER} parent add ultra
+      removed-from-wallet-commands:
+        - lp user {PLAYER} parent remove ultra
+      redeem-command: []
+    '5':
+      material: PAPER
+      model: 5
+      name: "&c&lGOD RANK"
+      redeemable: false
+      lore: []
+      exists-in-wallet-commands:
+        - lp user {PLAYER} parent add god
+      removed-from-wallet-commands:
+        - lp user {PLAYER} parent remove god
+      redeem-command: []
+#  '31a22119-db49-45a9-8829-8f4b234cb2f2':
+#    '1':
+#      material: CHEST
+#      model: 1
+#      name: "&e&lLAUNCH LOOTBOX"
+#      redeemable: false
+#      lore: []
+#      redeem-command: []
+  '7562b113-d945-4493-91f5-2c067d8fc244':
+    '1':
+      material: TRIPWIRE_HOOK
+      model: 1
+      name: "&f&lMYTHIC KEY"
+      redeemable: true
+      lore: []
+      redeem-command: []
+    '2':
+      material: TRIPWIRE_HOOK
+      model: 2
+      name: "&c&lCOSMIC KEY"
+      redeemable: true
+      lore: []
+      redeem-command: []
+    '3':
+      material: TRIPWIRE_HOOK
+      model: 3
+      name: "&b&lCELESTIAL KEY"
+      redeemable: true
+      lore: []
+      redeem-command: []

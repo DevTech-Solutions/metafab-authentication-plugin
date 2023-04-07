@@ -1,0 +1,21 @@
+{
+  "id": "string",
+  "gameId": "string",
+  "walletId": "string",
+  "connectedWalletId": "string",
+  "profileId": "string",
+  "username": "string",
+  "profilePermissions": {},
+  "accessTokenExpiresAt": "string",
+  "updatedAt": "string",
+  "createdAt": "string",
+  "profile": {},
+  "custodialWallet": {
+    "id": "string",
+    "address": "string"
+  },
+  "wallet": {
+    "id": "string",
+    "address": "string"
+  }
+}

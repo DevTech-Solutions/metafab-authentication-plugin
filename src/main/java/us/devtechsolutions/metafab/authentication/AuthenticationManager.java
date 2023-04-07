@@ -41,6 +41,7 @@ public final class AuthenticationManager {
 			final String playerId = req.queryParams("id");
 			final String walletDecryptKey = req.queryParams("walletDecryptKey");
 
+			// The code in this case is our custom url parameter we passed in.
 			if (Objects.isNull(code) || code.isEmpty()) {
 				// FIXME: Something went wrong, the code was null.
 				return SuccessHtmlConstant.HTML;
@@ -66,6 +67,7 @@ public final class AuthenticationManager {
 				player.accessToken(accessToken);
 				player.walletDecryptKey(walletDecryptKey);
 
+				provider.sendPlayerMessage(playerUniqueId, "Hi, %s!".formatted(player.username()));
 				provider.sendPlayerMessage(playerUniqueId, "You've successfully verified with MetaFab!");
 				System.out.println(player);
 			});
@@ -98,8 +100,12 @@ public final class AuthenticationManager {
 				.collect(Collectors.joining("&", "https://smp-store-3df8b.web.app/auth/?", ""));
 		requestParams.clear();
 
-		return "https://accounts.trymetafab.com/oauth/?ecosystem=%s&game=%s&redirectUri=%s"
-				.formatted(provider.ecosystemId(), provider.gameId(), encodedURL);
+		return ("https://connect.trymetafab.com/" +
+				"?flow=forceConnect" +
+				"&chain=MATIC" +
+				"&game=%s" +
+				"&redirectUri=%s"
+		).formatted(provider.gameId(), encodedURL);
 	}
 
 	public @Nullable UUID getCodeFromPlayer(UUID uniqueId) {

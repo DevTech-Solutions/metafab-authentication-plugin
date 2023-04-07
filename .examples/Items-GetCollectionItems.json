@@ -1,0 +1,16 @@
+[
+  {
+    "id": "string",
+    "image": "string",
+    "name": "string",
+    "description": "string",
+    "externalUrl": "string",
+    "attributes": [
+      {
+        "trait_type": "string",
+        "value": "string"
+      }
+    ],
+    "data": {}
+  }
+]
