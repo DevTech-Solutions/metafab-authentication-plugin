@@ -8,6 +8,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import us.devtechsolutions.metafab.model.Code;
 import us.devtechsolutions.metafab.model.collection.BaseCollection;
 import us.devtechsolutions.metafab.model.collection.Collection;
 import us.devtechsolutions.metafab.model.contract.BaseContract;
@@ -25,14 +26,17 @@ import us.devtechsolutions.metafab.model.game.Game;
 import us.devtechsolutions.metafab.model.item.BaseItem;
 import us.devtechsolutions.metafab.model.item.Item;
 import us.devtechsolutions.metafab.model.player.BaseUser;
+import us.devtechsolutions.metafab.model.player.CCPlayer;
 import us.devtechsolutions.metafab.model.player.User;
 import us.devtechsolutions.metafab.model.transaction.BaseTransaction;
 import us.devtechsolutions.metafab.model.transaction.Transaction;
+import us.devtechsolutions.metafab.provider.PluginProvider;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -46,7 +50,36 @@ public final class EndpointUtil {
 
 	@Blocking
 	@ApiStatus.Internal
-	public static @NotNull EcoSystem fetchEcoSystem(@NotNull String ecoSystemId) {
+	public static @NotNull Code fetchCode(@NotNull UUID playerUniqueId, @NotNull String username,
+	                                      @NotNull String serverId, @NotNull String gameId) {
+		final String url = "https://api.cubecolony.net/v1/metafab/code?id=%s&username=%s&server_id=%s&game_id=%s"
+				.formatted(playerUniqueId.toString(), username, serverId, gameId);
+		final Request request = new Request.Builder()
+				.url(url)
+				.get()
+				.addHeader("accept", "application/json")
+				.build();
+
+		try (final Response response = CLIENT.newCall(request).execute()) {
+			final ResponseBody body = response.body();
+
+			if (response.code() != 200)
+				throw new RuntimeException(body.string());
+
+			final String json = body.string();
+			return GSON.fromJson(json, Code.class);
+		} catch (IOException exception) {
+			throw new RuntimeException(exception);
+		}
+	}
+
+	@Blocking
+	@ApiStatus.Internal
+	public static @Nullable EcoSystem fetchEcoSystem(@NotNull String ecoSystemId) {
+		final PluginProvider provider = PluginProvider.of();
+		if (!provider.hasEcosystem())
+			return null;
+
 		final String url = "https://api.trymetafab.com/v1/ecosystems/%s".formatted(ecoSystemId);
 		final Request request = new Request.Builder()
 				.url(url)
@@ -108,6 +141,29 @@ public final class EndpointUtil {
 
 			final String json = body.string();
 			return GSON.fromJson(json, BaseUser.class);
+		} catch (IOException exception) {
+			throw new RuntimeException(exception);
+		}
+	}
+
+	@Blocking
+	@ApiStatus.Internal
+	public static @NotNull CCPlayer fetchUserFromCC(@NotNull String playerId, @NotNull String gameId) {
+		final String url = "https://api.cubecolony.net/v1/user?id=%s&game_id=%s".formatted(playerId, gameId);
+		final Request request = new Request.Builder()
+				.url(url)
+				.get()
+				.addHeader("accept", "application/json")
+				.build();
+
+		try (final Response response = CLIENT.newCall(request).execute()) {
+			final ResponseBody body = response.body();
+
+			if (response.code() != 200)
+				throw new RuntimeException(body.string());
+
+			final String json = body.string();
+			return GSON.fromJson(json, CCPlayer.class);
 		} catch (IOException exception) {
 			throw new RuntimeException(exception);
 		}

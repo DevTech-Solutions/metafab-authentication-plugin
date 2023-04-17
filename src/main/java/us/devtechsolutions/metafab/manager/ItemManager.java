@@ -1,4 +1,4 @@
-package us.devtechsolutions.metafab.item;
+package us.devtechsolutions.metafab.manager;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

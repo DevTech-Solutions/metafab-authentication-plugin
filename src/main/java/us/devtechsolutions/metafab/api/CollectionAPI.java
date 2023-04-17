@@ -1,11 +1,11 @@
 package us.devtechsolutions.metafab.api;
 
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NonBlocking;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import us.devtechsolutions.metafab.authentication.AuthenticationManager;
-import us.devtechsolutions.metafab.collection.CollectionManager;
+import us.devtechsolutions.metafab.manager.CollectionManager;
 import us.devtechsolutions.metafab.model.collection.Collection;
-import us.devtechsolutions.metafab.player.PlayerManager;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,22 +18,31 @@ public final class CollectionAPI {
 
 	private final CollectionManager collectionManager;
 
+	@ApiStatus.Internal
 	CollectionAPI(@NotNull CollectionManager collectionManager) {
 		singleton = this;
 
 		this.collectionManager = collectionManager;
 	}
 
-
-	public static List<Collection> getCollections() {
+	@NonBlocking
+	@ApiStatus.Experimental
+	@ApiStatus.AvailableSince("1.0")
+	public static @NotNull List<Collection> getCollections() {
 		return singleton.collectionManager.getCollections();
 	}
 
-	public static @Nullable Collection getCollection(String name) {
+	@NonBlocking
+	@ApiStatus.Experimental
+	@ApiStatus.AvailableSince("1.0")
+	public static @Nullable Collection getCollection(@NotNull String name) {
 		return singleton.collectionManager.getCollection(name);
 	}
 
-	public static @Nullable Collection getCollection(UUID id) {
+	@NonBlocking
+	@ApiStatus.Experimental
+	@ApiStatus.AvailableSince("1.0")
+	public static @Nullable Collection getCollection(@NotNull UUID id) {
 		return singleton.collectionManager.getCollection(id);
 	}
 }

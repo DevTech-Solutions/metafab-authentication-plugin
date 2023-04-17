@@ -20,6 +20,7 @@ import us.devtechsolutions.metafab.model.item.Item;
 import us.devtechsolutions.metafab.model.player.User;
 import us.devtechsolutions.metafab.model.transaction.Transaction;
 import us.devtechsolutions.metafab.model.wallet.Wallet;
+import us.devtechsolutions.metafab.provider.PluginProvider;
 import us.devtechsolutions.metafab.util.C;
 import us.devtechsolutions.metafab.util.StringUtil;
 
@@ -50,7 +51,8 @@ public final class RedeemInventory extends BaseContainer {
 
 		List<Wallet> wallets = List.of(user.wallet(), user.custodialWallet());
 
-		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+		PluginProvider provider = PluginProvider.of();
+		provider.runAsync(() -> {
 			int index = 0;
 
 			for (Collection collection : CollectionAPI.getCollections()) {
@@ -80,10 +82,13 @@ public final class RedeemInventory extends BaseContainer {
 						itemBuilder.lore("", "&6➢ &eClick to redeem!");
 
 						addItem(new ClickableItem(getInsideSlots()[index++], itemBuilder.build(), (clicker, clickType) -> {
-							new ConfirmationContainer((confirmed) -> {
-								configItem.setRedeemed(true);
-
+							final ConfirmationContainer confirmationContainer = new ConfirmationContainer((confirmed) -> {
 								clicker.closeInventory();
+
+								if (!confirmed)
+									return;
+
+								configItem.setRedeemed(true);
 								clicker.sendMessage(C.translate("&eYou successfully redeemed &6%s".formatted(item.name())));
 
 								final Transaction transaction = ItemAPI.burnCollectionItem(
@@ -98,7 +103,9 @@ public final class RedeemInventory extends BaseContainer {
 								for (String command : configItem.getCommands()) {
 									Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replaceAll("\\{PLAYER}", clicker.getName()));
 								}
-							}).open(clicker);
+							});
+
+							provider.runSync(() -> confirmationContainer.open(clicker));
 						}));
 					}
 				}

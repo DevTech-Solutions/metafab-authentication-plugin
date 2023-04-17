@@ -1,14 +1,5 @@
-ecosystem:
-  id: ""
-  secret: ""
-
-game:
-  id: ""
-  secret: ""
-
-web-server:
-  port: 3002
-  redirect: "https://lbu.ke"
+ecosystem_id: ""
+game_id: ""
 
 items:
   'e1261d6a-09f2-4383-9e75-717f3986d257':
@@ -67,14 +58,6 @@ items:
       removed-from-wallet-commands:
         - lp user {PLAYER} parent remove god
       redeem-command: []
-#  '31a22119-db49-45a9-8829-8f4b234cb2f2':
-#    '1':
-#      material: CHEST
-#      model: 1
-#      name: "&e&lLAUNCH LOOTBOX"
-#      redeemable: false
-#      lore: []
-#      redeem-command: []
   '7562b113-d945-4493-91f5-2c067d8fc244':
     '1':
       material: TRIPWIRE_HOOK

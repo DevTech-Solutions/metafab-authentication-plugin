@@ -1,5 +1,6 @@
-package us.devtechsolutions.metafab.collection;
+package us.devtechsolutions.metafab.manager;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import us.devtechsolutions.metafab.model.collection.Collection;
 
@@ -16,22 +17,22 @@ public final class CollectionManager {
 	private final Map<UUID, Collection> collectionIdMap = new HashMap<>();
 	private final Map<String, Collection> collectionNameMap = new HashMap<>();
 
-	public CollectionManager(List<Collection> collectionList) {
+	public CollectionManager(@NotNull List<Collection> collectionList) {
 		collectionList.forEach(c -> {
 			this.collectionIdMap.put(c.id(), c);
 			this.collectionNameMap.put(c.name(), c);
 		});
 	}
 
-	public List<Collection> getCollections() {
+	public @NotNull List<Collection> getCollections() {
 		return collectionIdMap.values().stream().toList();
 	}
 
-	public @Nullable Collection getCollection(String name) {
+	public @Nullable Collection getCollection(@NotNull String name) {
 		return this.collectionNameMap.get(name);
 	}
 
-	public @Nullable Collection getCollection(UUID id) {
+	public @Nullable Collection getCollection(@NotNull UUID id) {
 		return this.collectionIdMap.get(id);
 	}
 }

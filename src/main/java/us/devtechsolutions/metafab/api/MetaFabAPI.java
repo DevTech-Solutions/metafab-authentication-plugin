@@ -1,19 +1,19 @@
 package us.devtechsolutions.metafab.api;
 
-import org.jetbrains.annotations.*;
-import us.devtechsolutions.metafab.authentication.AuthenticationManager;
-import us.devtechsolutions.metafab.collection.CollectionManager;
-import us.devtechsolutions.metafab.item.ItemManager;
-import us.devtechsolutions.metafab.model.contract.Contract;
-import us.devtechsolutions.metafab.model.currency.Currency;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NonBlocking;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import us.devtechsolutions.metafab.manager.AuthenticationManager;
+import us.devtechsolutions.metafab.manager.CollectionManager;
+import us.devtechsolutions.metafab.manager.ContractManager;
+import us.devtechsolutions.metafab.manager.CurrencyManager;
+import us.devtechsolutions.metafab.manager.ItemManager;
 import us.devtechsolutions.metafab.model.ecosystem.EcoSystem;
 import us.devtechsolutions.metafab.model.game.Game;
-import us.devtechsolutions.metafab.model.player.User;
 import us.devtechsolutions.metafab.player.PlayerManager;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * @author LBuke (Teddeh)
@@ -22,12 +22,8 @@ import java.util.UUID;
 public final class MetaFabAPI {
 	private static MetaFabAPI singleton;
 
-	private final AuthenticationManager authenticationManager;
-	private final PlayerManager playerManager;
 	private final EcoSystem ecoSystem;
 	private final Game game;
-	private final List<Currency> currencies;
-	private final List<Contract> contracts;
 
 	/**
 	 * This constructor is NOT designed to be instantiated outside MetaFab Authentication Plugin.
@@ -36,23 +32,21 @@ public final class MetaFabAPI {
 	@ApiStatus.Internal
 	public MetaFabAPI(@NotNull AuthenticationManager authenticationManager, @NotNull PlayerManager playerManager,
 					  @NotNull CollectionManager collectionManager, @NotNull ItemManager itemManager,
-	                  @NotNull EcoSystem ecoSystem, @NotNull Game game, @NotNull List<Currency> currencies,
-	                  @NotNull List<Contract> contracts) {
+					  @NotNull ContractManager contractManager, @NotNull CurrencyManager currencyManager,
+	                  @Nullable EcoSystem ecoSystem, @NotNull Game game) {
 		if (!Objects.isNull(singleton))
 			throw new RuntimeException("MetaFabAPI is not intended to be instantiated.");
 
 		singleton = this;
 
-		this.authenticationManager = authenticationManager;
-		this.playerManager = playerManager;
 		this.ecoSystem = ecoSystem;
 		this.game = game;
-		this.currencies = currencies;
-		this.contracts = contracts;
 
 		new UserAPI(authenticationManager, playerManager);
 		new CollectionAPI(collectionManager);
 		new ItemAPI(itemManager);
+		new ContractAPI(contractManager);
+		new CurrencyAPI(currencyManager);
 	}
 
 	/**
@@ -61,8 +55,9 @@ public final class MetaFabAPI {
 	 * @return the EcoSystem
 	 */
 	@NonBlocking
+	@ApiStatus.Experimental
 	@ApiStatus.AvailableSince("1.0")
-	public static @NotNull EcoSystem getEcoSystem() {
+	public static @Nullable EcoSystem getEcoSystem() {
 		return singleton.ecoSystem;
 	}
 
@@ -72,34 +67,9 @@ public final class MetaFabAPI {
 	 * @return the Game
 	 */
 	@NonBlocking
+	@ApiStatus.Experimental
 	@ApiStatus.AvailableSince("1.0")
 	public static @NotNull Game getGame() {
 		return singleton.game;
 	}
-
-	/**
-	 * Get the MetaFabPlayer object from the Minecraft player unique id.
-	 *
-	 * @param playerUniqueId - Minecraft player unique id
-	 * @return the MetaFabPlayer object
-	 */
-	@NonBlocking
-	@ApiStatus.AvailableSince("1.0")
-	public static @NotNull User playerById(@NotNull UUID playerUniqueId) {
-		return null;
-	}
-
-	/**
-	 * Get the MetaFabPlayer object from the MetaFab user id.
-	 *
-	 * @param metaFabUserId - MetaFab user id
-	 * @return the MetaFabPlayer object
-	 */
-	@NonBlocking
-	@ApiStatus.AvailableSince("1.0")
-	public static @NotNull User playerByUniqueId(@NotNull UUID metaFabUserId) {
-		return null;
-	}
-
-//	public static @NotNull String
 }

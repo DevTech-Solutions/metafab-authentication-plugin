@@ -3,6 +3,8 @@ package us.devtechsolutions.metafab.player;
 import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import us.devtechsolutions.metafab.model.player.BaseUser;
+import us.devtechsolutions.metafab.model.player.CCPlayer;
 import us.devtechsolutions.metafab.model.player.User;
 import us.devtechsolutions.metafab.util.EndpointUtil;
 
@@ -29,6 +31,20 @@ public final class PlayerManager {
 		data.metaFabId(metaFabPlayerId);
 
 		final User user = EndpointUtil.fetchUser(metaFabPlayerId);
+		data.metaFabPlayer(user);
+
+		playerMap.put(playerUniqueId, data);
+		return user;
+	}
+
+	@Blocking
+	public @NotNull User fetchUser(@NotNull UUID playerUniqueId, @NotNull CCPlayer ccPlayer) {
+		final PlayerData data = playerMap.getOrDefault(playerUniqueId, new PlayerData(playerUniqueId));
+		data.metaFabId(ccPlayer.metafabId());
+
+		final User user = EndpointUtil.fetchUser(ccPlayer.metafabId());
+		((BaseUser) user).accessToken(ccPlayer.accessToken());
+		((BaseUser) user).walletDecryptKey(ccPlayer.walletDecryptKey());
 		data.metaFabPlayer(user);
 
 		playerMap.put(playerUniqueId, data);

@@ -1,15 +1,19 @@
 package us.devtechsolutions.metafab.bukkit.command;
 
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import us.devtechsolutions.metafab.authentication.AuthenticationManager;
+import org.jetbrains.annotations.NotNull;
+import us.devtechsolutions.metafab.manager.AuthenticationManager;
+import us.devtechsolutions.metafab.model.player.User;
+import us.devtechsolutions.metafab.player.PlayerManager;
+import us.devtechsolutions.metafab.util.C;
+
+import java.util.Objects;
 
 /**
  * @author LBuke (Teddeh)
@@ -17,9 +21,11 @@ import us.devtechsolutions.metafab.authentication.AuthenticationManager;
 public final class BukkitAuthCommand implements CommandExecutor {
 
 	private final AuthenticationManager authenticationManager;
+	private final PlayerManager playerManager;
 
-	public BukkitAuthCommand(AuthenticationManager authenticationManager) {
+	public BukkitAuthCommand(@NotNull AuthenticationManager authenticationManager, @NotNull PlayerManager playerManager) {
 		this.authenticationManager = authenticationManager;
+		this.playerManager = playerManager;
 	}
 
 	@Override
@@ -27,18 +33,20 @@ public final class BukkitAuthCommand implements CommandExecutor {
 		if (!(sender instanceof Player player))
 			return true;
 
-		final String url = this.authenticationManager.generateLink(player.getUniqueId());
+		this.authenticationManager.generateLink(player.getUniqueId(), player.getName(), url -> {
+			final User user = this.playerManager.getMetaFabUser(player.getUniqueId());
+			String str = "&d&lMETAFAB &e&oClick here Authenticate!";
+			if (!Objects.isNull(user)) {
+				str = "&d&lMETAFAB &fHi, %s.\n&d&lMETAFAB &e&oClick here to re-authenticate!".formatted(user.username());
+			}
 
-		final Component component = Component.text("Authentication Link, Click me to open")
-				.style(style -> style.color(NamedTextColor.AQUA))
-				.hoverEvent(HoverEvent.showText(
-						Component.text("Left click to open url")
-				))
-				.clickEvent(ClickEvent.clickEvent(
-						ClickEvent.Action.OPEN_URL, url
-				));
+			final Component component = Component.text(C.translate(str))
+					.hoverEvent(HoverEvent.showText(Component.text("Click to open url")))
+					.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL, url));
 
-		player.sendMessage(component);
+			player.sendMessage(component);
+		});
+
 		return true;
 	}
 }

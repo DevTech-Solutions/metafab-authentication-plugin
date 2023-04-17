@@ -12,9 +12,12 @@ import us.devtechsolutions.metafab.api.UserAPI;
 import us.devtechsolutions.metafab.bukkit.config.ConfigManager;
 import us.devtechsolutions.metafab.model.collection.Collection;
 import us.devtechsolutions.metafab.model.item.Item;
+import us.devtechsolutions.metafab.model.player.CCPlayer;
 import us.devtechsolutions.metafab.model.player.User;
 import us.devtechsolutions.metafab.model.wallet.Wallet;
 import us.devtechsolutions.metafab.player.PlayerManager;
+import us.devtechsolutions.metafab.provider.PluginProvider;
+import us.devtechsolutions.metafab.util.EndpointUtil;
 
 import java.util.List;
 import java.util.Objects;
@@ -41,14 +44,13 @@ public final class PlayerJoinListener implements Listener {
 	public void onPlayerConnect(AsyncPlayerPreLoginEvent event) {
 		User user = UserAPI.getMetaFabUser(event.getUniqueId());
 		if (Objects.isNull(user)) {
-			//TODO: Contact backend database for account id.
-			boolean exists = false;
-			if (exists) {
-				user = this.playerManager.fetchUser(event.getUniqueId(), "");
-			} else {
-				// Hasn't verified.
-				return;
+			final PluginProvider provider = PluginProvider.of();
+			final CCPlayer ccPlayer = EndpointUtil.fetchUserFromCC(event.getUniqueId().toString(), provider.gameId());
+			if (ccPlayer.metafabId().isEmpty()) {
+				return; // Hasn't verified.
 			}
+
+			user = this.playerManager.fetchUser(event.getUniqueId(), ccPlayer);
 		}
 
 		final List<Wallet> wallets = List.of(user.wallet(), user.custodialWallet());
