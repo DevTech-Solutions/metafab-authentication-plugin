@@ -82,30 +82,32 @@ public final class RedeemInventory extends BaseContainer {
 						itemBuilder.lore("", "&6➢ &eClick to redeem!");
 
 						addItem(new ClickableItem(getInsideSlots()[index++], itemBuilder.build(), (clicker, clickType) -> {
-							final ConfirmationContainer confirmationContainer = new ConfirmationContainer((confirmed) -> {
-								clicker.closeInventory();
+							provider.runSync(() -> {
+								final ConfirmationContainer confirmationContainer = new ConfirmationContainer((confirmed) -> {
+									clicker.closeInventory();
 
-								if (!confirmed)
-									return;
+									if (!confirmed)
+										return;
 
-								configItem.setRedeemed(true);
-								clicker.sendMessage(C.translate("&eYou successfully redeemed &6%s".formatted(item.name())));
+									configItem.setRedeemed(true);
+									clicker.sendMessage(C.translate("&eYou successfully redeemed &6%s".formatted(item.name())));
 
-								final Transaction transaction = ItemAPI.burnCollectionItem(
-										collection.id().toString(),
-										item.id(),
-										1,
-										user.accessToken(),
-										user.walletDecryptKey()
-								);
-								System.out.println(transaction);
+									provider.runAsync(() -> {
+										ItemAPI.burnCollectionItem(
+												collection.id().toString(),
+												item.id(),
+												1,
+												user.accessToken(),
+												user.walletDecryptKey()
+										);
+									});
 
-								for (String command : configItem.getCommands()) {
-									Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replaceAll("\\{PLAYER}", clicker.getName()));
-								}
+									for (String command : configItem.getCommands()) {
+										Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replaceAll("\\{PLAYER}", clicker.getName()));
+									}
+								});
+								confirmationContainer.open(clicker);
 							});
-
-							provider.runSync(() -> confirmationContainer.open(clicker));
 						}));
 					}
 				}
