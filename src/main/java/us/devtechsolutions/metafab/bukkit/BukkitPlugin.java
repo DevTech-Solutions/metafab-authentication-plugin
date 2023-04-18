@@ -31,6 +31,7 @@ import java.util.UUID;
  */
 public final class BukkitPlugin extends JavaPlugin implements PluginProvider {
 
+	private PlayerManager playerManager;
 	private PluginSocketClient socketServer;
 	private UUID serverId;
 
@@ -52,7 +53,7 @@ public final class BukkitPlugin extends JavaPlugin implements PluginProvider {
 
 		// Initialise Managers
 		final ConfigManager configManager = new ConfigManager(this);
-		final PlayerManager playerManager = new PlayerManager();
+		this.playerManager = new PlayerManager();
 		final AuthenticationManager authenticationManager = new AuthenticationManager();
 		final CollectionManager collectionManager = new CollectionManager(collections);
 		final ItemManager itemManager = new ItemManager();
@@ -65,19 +66,20 @@ public final class BukkitPlugin extends JavaPlugin implements PluginProvider {
 		Objects.requireNonNull(this.getCommand("redeem")).setExecutor(new RedeemableCommand(this, configManager));
 
 		// Register Listeners
-		Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(this, configManager, playerManager), this);
+		Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(this, configManager, this.playerManager), this);
 		Bukkit.getPluginManager().registerEvents(new ContainerHandler(), this);
 
-		new MetaFabAPI(authenticationManager, playerManager, collectionManager, itemManager, contractManager, currencyManager, ecoSystem, game);
+		new MetaFabAPI(authenticationManager, this.playerManager, collectionManager, itemManager, contractManager, currencyManager, ecoSystem, game);
 
 		CollectionAPI.getCollections().forEach(c -> System.out.printf("%s - %s%n", c.name(), c.id()));
 		ItemAPI.getItems().forEach(item -> System.out.printf("%s - %s%n", item.id(), item.name()));
 
-		runAsync(() -> this.socketServer = new PluginSocketClient(this, playerManager));
+		runAsync(() -> this.socketServer = new PluginSocketClient(this, this.playerManager));
 	}
 
 	@Override
 	public void onDisable() {
+		this.playerManager.invalidate();
 		this.socketServer.close();
 	}
 
