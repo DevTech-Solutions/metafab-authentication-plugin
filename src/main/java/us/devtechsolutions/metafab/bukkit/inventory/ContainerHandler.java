@@ -19,10 +19,6 @@ import us.devtechsolutions.metafab.bukkit.inventory.button.ContainerItem;
  */
 public class ContainerHandler implements Listener {
 
-    public ContainerHandler(JavaPlugin plugin) {
-        Bukkit.getPluginManager().registerEvents(this, plugin);
-    }
-
     public void destroy() {
         Bukkit.getOnlinePlayers().forEach(HumanEntity::closeInventory);
         HandlerList.unregisterAll(this);

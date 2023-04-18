@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import us.devtechsolutions.metafab.api.CollectionAPI;
 import us.devtechsolutions.metafab.api.ItemAPI;
 import us.devtechsolutions.metafab.api.MetaFabAPI;
+import us.devtechsolutions.metafab.bukkit.inventory.ContainerHandler;
 import us.devtechsolutions.metafab.manager.AuthenticationManager;
 import us.devtechsolutions.metafab.bukkit.command.BukkitAuthCommand;
 import us.devtechsolutions.metafab.bukkit.command.RedeemableCommand;
@@ -69,6 +70,7 @@ public final class BukkitPlugin extends JavaPlugin implements PluginProvider {
 
 		// Register Listeners
 		Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(this, configManager, playerManager), this);
+		Bukkit.getPluginManager().registerEvents(new ContainerHandler(), this);
 
 		new MetaFabAPI(authenticationManager, playerManager, collectionManager, itemManager, contractManager, currencyManager, ecoSystem, game);
 

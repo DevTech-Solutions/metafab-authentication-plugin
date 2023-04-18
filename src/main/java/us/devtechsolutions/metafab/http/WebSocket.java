@@ -55,7 +55,6 @@ public final class WebSocket extends WebSocketClient {
 		final JsonObject jsonObject = jsonElement.getAsJsonObject();
 		if (!jsonObject.has("type")) {
 			final SimpleMessage simpleMessage = GSON.fromJson(jsonObject, SimpleMessage.class);
-			System.out.println(simpleMessage.message());
 			return;
 		}
 
@@ -93,7 +92,6 @@ public final class WebSocket extends WebSocketClient {
 	/** {@inheritDoc} */
 	@Override
 	public void onClose(int code, String reason, boolean remote) {
-		System.out.printf(reason);
 	}
 
 	/** {@inheritDoc} */

@@ -3,8 +3,6 @@ package us.devtechsolutions.metafab.bukkit.inventory.impl;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import us.devtechsolutions.metafab.api.CollectionAPI;
@@ -18,7 +16,6 @@ import us.devtechsolutions.metafab.bukkit.item.ItemBuilder;
 import us.devtechsolutions.metafab.model.collection.Collection;
 import us.devtechsolutions.metafab.model.item.Item;
 import us.devtechsolutions.metafab.model.player.User;
-import us.devtechsolutions.metafab.model.transaction.Transaction;
 import us.devtechsolutions.metafab.model.wallet.Wallet;
 import us.devtechsolutions.metafab.provider.PluginProvider;
 import us.devtechsolutions.metafab.util.C;
@@ -27,6 +24,7 @@ import us.devtechsolutions.metafab.util.StringUtil;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author LBuke (Teddeh)
@@ -46,14 +44,11 @@ public final class RedeemInventory extends BaseContainer {
 		if (Objects.isNull(user))
 			return;
 
-		System.out.println("player.wallet = " + user.wallet().address());
-		System.out.println("player.custodialWallet = " + user.custodialWallet().address());
-
 		List<Wallet> wallets = List.of(user.wallet(), user.custodialWallet());
 
 		PluginProvider provider = PluginProvider.of();
 		provider.runAsync(() -> {
-			int index = 0;
+			AtomicInteger index = new AtomicInteger();
 
 			for (Collection collection : CollectionAPI.getCollections()) {
 				final Set<Item> items = ItemAPI.getItems(collection.id());
@@ -81,8 +76,8 @@ public final class RedeemInventory extends BaseContainer {
 						itemBuilder.amount(Math.min(balance, 64));
 						itemBuilder.lore("", "&6➢ &eClick to redeem!");
 
-						addItem(new ClickableItem(getInsideSlots()[index++], itemBuilder.build(), (clicker, clickType) -> {
-							provider.runSync(() -> {
+						provider.runSync(() -> {
+							addItem(new ClickableItem(getInsideSlots()[index.getAndIncrement()], itemBuilder.build(), (clicker, clickType) -> {
 								final ConfirmationContainer confirmationContainer = new ConfirmationContainer((confirmed) -> {
 									clicker.closeInventory();
 
@@ -107,8 +102,8 @@ public final class RedeemInventory extends BaseContainer {
 									}
 								});
 								confirmationContainer.open(clicker);
-							});
-						}));
+							}));
+						});
 					}
 				}
 			}
