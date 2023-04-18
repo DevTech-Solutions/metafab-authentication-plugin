@@ -53,8 +53,6 @@ public final class PlayerJoinListener implements Listener {
 			user = this.playerManager.fetchUser(event.getUniqueId(), ccPlayer);
 		}
 
-		final List<Wallet> wallets = List.of(user.wallet(), user.custodialWallet());
-
 		for (final Collection collection : CollectionAPI.getCollections()) {
 			final Set<Item> items = ItemAPI.getItems(collection.id());
 			if (Objects.isNull(items))
