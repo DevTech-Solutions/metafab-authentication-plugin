@@ -10,7 +10,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 import us.devtechsolutions.metafab.bukkit.inventory.button.ClickableItem;
 import us.devtechsolutions.metafab.bukkit.inventory.button.ContainerItem;
 

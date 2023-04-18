@@ -13,7 +13,6 @@ import org.java_websocket.handshake.ServerHandshake;
 import org.jetbrains.annotations.NotNull;
 import us.devtechsolutions.metafab.http.message.MessageType;
 import us.devtechsolutions.metafab.http.message.PlayerAuthentication;
-import us.devtechsolutions.metafab.http.message.SimpleMessage;
 import us.devtechsolutions.metafab.model.player.CCPlayer;
 import us.devtechsolutions.metafab.player.PlayerManager;
 import us.devtechsolutions.metafab.provider.PluginProvider;

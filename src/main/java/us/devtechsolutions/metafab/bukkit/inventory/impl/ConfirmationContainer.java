@@ -1,10 +1,8 @@
 package us.devtechsolutions.metafab.bukkit.inventory.impl;
 
 import org.bukkit.Material;
-import org.bukkit.event.inventory.InventoryType;
 import us.devtechsolutions.metafab.bukkit.inventory.BaseContainer;
 import us.devtechsolutions.metafab.bukkit.inventory.button.ClickableItem;
-import us.devtechsolutions.metafab.bukkit.inventory.button.ContainerItem;
 import us.devtechsolutions.metafab.bukkit.item.ItemBuilder;
 import us.devtechsolutions.metafab.util.C;
 import us.devtechsolutions.metafab.util.Callback;
