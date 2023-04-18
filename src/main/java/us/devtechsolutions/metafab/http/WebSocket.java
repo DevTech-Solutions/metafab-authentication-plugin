@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.jetbrains.annotations.NotNull;
@@ -27,9 +28,12 @@ import java.util.UUID;
  */
 public final class WebSocket extends WebSocketClient {
 	private static final Gson GSON = new Gson();
+	private static final int MAX_RETRIES = 30;
 
 	private final JavaPlugin plugin;
 	private final PlayerManager playerManager;
+
+	private BukkitTask task;
 
 	public WebSocket(@NotNull JavaPlugin plugin, @NotNull PlayerManager playerManager, @NotNull URI uri) {
 		super(uri);
@@ -40,11 +44,12 @@ public final class WebSocket extends WebSocketClient {
 	/** {@inheritDoc} */
 	@Override
 	public void onOpen(ServerHandshake handshake) {
-		Bukkit.getScheduler().runTaskTimerAsynchronously(this.plugin, () -> {
+		this.task = Bukkit.getScheduler().runTaskTimerAsynchronously(this.plugin, () -> {
 			if (PluginSocketClient.connected) {
 				this.sendPing();
 			}
 		}, 20 * 10L, 20 * 10L);
+
 		PluginSocketClient.connected = true;
 	}
 
@@ -53,10 +58,8 @@ public final class WebSocket extends WebSocketClient {
 	public void onMessage(String message) {
 		final JsonElement jsonElement = JsonParser.parseString(message);
 		final JsonObject jsonObject = jsonElement.getAsJsonObject();
-		if (!jsonObject.has("type")) {
-			final SimpleMessage simpleMessage = GSON.fromJson(jsonObject, SimpleMessage.class);
+		if (!jsonObject.has("type"))
 			return;
-		}
 
 		final MessageType type = MessageType.valueOf(jsonObject.get("type").getAsString());
 
@@ -92,6 +95,7 @@ public final class WebSocket extends WebSocketClient {
 	/** {@inheritDoc} */
 	@Override
 	public void onClose(int code, String reason, boolean remote) {
+		connect();
 	}
 
 	/** {@inheritDoc} */
@@ -104,8 +108,9 @@ public final class WebSocket extends WebSocketClient {
 	@Override
 	public void onClosing(int code, String reason, boolean remote) {
 		PluginSocketClient.connected = false;
-		PluginSocketClient.reconnecting = true;
 
-		// TODO: Try reconnect
+		if (!Objects.isNull(this.task)) {
+			this.task.cancel();
+		}
 	}
 }

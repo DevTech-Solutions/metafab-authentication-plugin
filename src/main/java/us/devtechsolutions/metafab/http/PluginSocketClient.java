@@ -20,7 +20,6 @@ public final class PluginSocketClient {
 	private static final Gson GSON = new Gson();
 
 	public static boolean connected = false;
-	public static boolean reconnecting = false;
 
 	private WebSocket webSocket;
 
