@@ -45,22 +45,19 @@ public final class AuthenticationManager {
 
 			// Build the redirect uri.
 			final Map<String, String> requestParams = new HashMap<>();
-			requestParams.put("data", "%s!%s".formatted(
-					code.getCode().toString(),
-					"unused"
-			));
+			requestParams.put("data", "%s!%s".formatted(code.getCode().toString(), "unused"));
 			final String encodedURL = requestParams.keySet().stream()
 					.map(key -> key + "=" + URLEncoder.encode(requestParams.get(key), StandardCharsets.UTF_8))
 					.collect(Collectors.joining("&", "https://cubecolony.net/auth/?", ""));
 			requestParams.clear();
 
 			if (provider.hasEcosystem()) {
-				callback.call("https://accounts.trymetafab.com/?chain=MATIC&ecosystem=%s&game=%s&redirectUri=%s"
+				callback.call("https://accounts.trymetafab.com/oauth/?flow=loginConnect&chain=MATIC&ecosystem=%s&game=%s&redirectUri=%s"
 						.formatted(provider.ecosystemId(), provider.gameId(), encodedURL));
 				return;
 			}
 
-			callback.call("https://accounts.trymetafab.com/?chain=MATIC&game=%s&redirectUri=%s"
+			callback.call("https://accounts.trymetafab.com/oauth/?chain=MATIC&game=%s&redirectUri=%s"
 					.formatted(provider.gameId(), encodedURL));
 		});
 	}

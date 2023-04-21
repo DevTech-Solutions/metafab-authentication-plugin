@@ -27,7 +27,6 @@ import java.util.UUID;
  */
 public final class WebSocket extends WebSocketClient {
 	private static final Gson GSON = new Gson();
-	private static final int MAX_RETRIES = 30;
 
 	private final JavaPlugin plugin;
 	private final PlayerManager playerManager;
@@ -57,6 +56,7 @@ public final class WebSocket extends WebSocketClient {
 	public void onMessage(String message) {
 		final JsonElement jsonElement = JsonParser.parseString(message);
 		final JsonObject jsonObject = jsonElement.getAsJsonObject();
+
 		if (!jsonObject.has("type"))
 			return;
 
@@ -94,7 +94,7 @@ public final class WebSocket extends WebSocketClient {
 	/** {@inheritDoc} */
 	@Override
 	public void onClose(int code, String reason, boolean remote) {
-		connect();
+//		connect();
 	}
 
 	/** {@inheritDoc} */

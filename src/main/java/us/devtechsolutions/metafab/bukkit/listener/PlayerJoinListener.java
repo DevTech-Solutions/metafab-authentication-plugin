@@ -42,16 +42,13 @@ public final class PlayerJoinListener implements Listener {
 
 	@EventHandler
 	public void onPlayerConnect(AsyncPlayerPreLoginEvent event) {
-		User user = UserAPI.getMetaFabUser(event.getUniqueId());
-		if (Objects.isNull(user)) {
-			final PluginProvider provider = PluginProvider.of();
-			final CCPlayer ccPlayer = EndpointUtil.fetchUserFromCC(event.getUniqueId().toString(), provider.gameId());
-			if (ccPlayer.metafabId().isEmpty()) {
-				return; // Hasn't verified.
-			}
-
-			user = this.playerManager.fetchUser(event.getUniqueId(), ccPlayer);
+		final PluginProvider provider = PluginProvider.of();
+		final CCPlayer ccPlayer = EndpointUtil.fetchUserFromCC(event.getUniqueId().toString(), provider.gameId());
+		if (ccPlayer.metafabId().isEmpty()) {
+			return; // Hasn't verified.
 		}
+
+		final User user = this.playerManager.fetchUser(event.getUniqueId(), ccPlayer);
 
 		for (final Collection collection : CollectionAPI.getCollections()) {
 			final Set<Item> items = ItemAPI.getItems(collection.id());

@@ -26,10 +26,8 @@ public final class PluginSocketClient {
 	public PluginSocketClient(@NotNull JavaPlugin plugin, @NotNull PlayerManager playerManager) {
 		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
 			try {
-				final URI uri = new URI("wss://api.cubecolony.net");
+				final URI uri = new URI("wss://api.cubecolony.net/v1");
 				this.webSocket = new WebSocket(plugin, playerManager, uri);
-				this.webSocket.setConnectionLostTimeout(0);
-
 				this.webSocket.connect();
 
 				while (!connected)

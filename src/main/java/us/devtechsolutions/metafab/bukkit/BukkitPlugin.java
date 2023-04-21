@@ -74,7 +74,7 @@ public final class BukkitPlugin extends JavaPlugin implements PluginProvider {
 		CollectionAPI.getCollections().forEach(c -> System.out.printf("%s - %s%n", c.name(), c.id()));
 		ItemAPI.getItems().forEach(item -> System.out.printf("%s - %s%n", item.id(), item.name()));
 
-		runAsync(() -> this.socketServer = new PluginSocketClient(this, this.playerManager));
+		this.socketServer = new PluginSocketClient(this, this.playerManager);
 	}
 
 	@Override

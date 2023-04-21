@@ -461,7 +461,7 @@ public final class EndpointUtil {
 		final String url = "https://api.trymetafab.com/v1/collections/%s/items/%s/burns".formatted(collectionId, itemId);
 
 		final MediaType mediaType = MediaType.parse("application/json");
-		RequestBody requestBody = RequestBody.create(mediaType, "{\"quantity\":1}");
+		RequestBody requestBody = RequestBody.create(mediaType, "{\"quantity\":%s}".formatted(quantity));
 		final Request request = new Request.Builder()
 				.url(url)
 				.post(requestBody)
