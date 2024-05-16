@@ -34,7 +34,7 @@ Upon redeeming an item, it will be removed from the player's wallet as it is bur
 MetaFab-Authentication-Plugin uses Maven to handle dependencies & building.
 
 #### Requirements
-* Java 17 JDK or newer
+* Java 17 or newer
 * Git
 
 #### Compiling from source
